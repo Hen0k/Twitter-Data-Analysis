@@ -20,6 +20,8 @@ jobs:
         # Checkout the latest code from the repo
       - name: Checkout repo
         uses: actions/checkout@v2
+      - name: Extract some files
+        run: unzip data/Economic_Twitter_Data.zip -d data/
         # Setup which version of Python to use
       - name: Set Up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -35,3 +37,5 @@ jobs:
           pip install -r requirements.txt
       - name: Run tests
         run: python -m unittest tests/test*
+      - name: Clean up
+        run: rm data/*.json

@@ -39,3 +39,4 @@ jobs:
         run: python -m unittest tests/test*
       - name: Clean up
         run: rm data/*.json
+        

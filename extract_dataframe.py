@@ -54,10 +54,10 @@ class TweetDfExtractor:
         return text
 
     def find_sentiments(self, text) -> list:
-        blob = TextBlob(text)
-        polarity = blob.sentiment.polarity
-        subjectivity = blob.sentiment.subjectivity
-
+        polarity = [
+            TextBlob(full_text).sentiment.polarity for full_text in text]
+        subjectivity = [
+            TextBlob(full_text).sentiment.subjectivity for full_text in text]
         return polarity, subjectivity
 
     def find_created_time(self) -> list:
@@ -66,8 +66,7 @@ class TweetDfExtractor:
         return created_at
 
     def find_source(self) -> list:
-        source = [entry['source'].split('>')[1].split(
-            '<')[0] for entry in self.tweets_list]
+        source = [entry['source'] for entry in self.tweets_list]
 
         return source
 
@@ -111,11 +110,14 @@ class TweetDfExtractor:
         hashtags = [entry['entities']['hashtags']
                     for entry in self.tweets_list]
 
+        hashtags = [[ht.get('text') for ht in x] if len(x) else [] for x in hashtags]
         return hashtags
 
     def find_mentions(self) -> list:
         mentions = [entry['entities']['user_mentions']
                     for entry in self.tweets_list]
+
+        mentions = [[mention.get('screen_name') for mention in x] if len(x) else [] for x in mentions]
 
         return mentions
 
@@ -133,8 +135,7 @@ class TweetDfExtractor:
         created_at = self.find_created_time()
         source = self.find_source()
         text = self.find_full_text()
-        sentiment = np.array([self.find_sentiments(entry) for entry in text])
-        polarity, subjectivity = sentiment[:, 0], sentiment[:, 1]
+        polarity, subjectivity = self.find_sentiments(text)
         lang = self.find_lang()
         fav_count = self.find_favourite_count()
         retweet_count = self.find_retweet_count()

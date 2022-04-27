@@ -15,7 +15,8 @@ class Clean_Tweets:
         remove rows that has column names. This error originated from
         the data collection stage.  
         """
-        unwanted_rows = self.df[self.df['retweet_count'] == 'retweet_count'].index
+        unwanted_rows = self.df[self.df['retweet_count']
+                                == 'retweet_count'].index
         self.df.drop(unwanted_rows, inplace=True)
         self.df = self.df[self.df['polarity'] != 'polarity']
 
@@ -26,6 +27,14 @@ class Clean_Tweets:
         drop duplicate rows
         """
         self.df.drop_duplicates(inplace=True)
+
+        return self.df
+
+    def drop_nan(self) -> pd.DataFrame:
+        """
+        drop rows with nan entries
+        """
+        self.df.dropna(inplace=True)
 
         return self.df
 
@@ -44,7 +53,7 @@ class Clean_Tweets:
         favorite_count etc to numbers
         """
         column_names = ['polarity', 'subjectivity',
-                        'retweet_count', 'favorite_count', 
+                        'retweet_count', 'favorite_count',
                         'followers_count', 'friends_count']
         for column in column_names:
             self.df[column] = pd.to_numeric(self.df[column])
@@ -58,12 +67,22 @@ class Clean_Tweets:
         self.df = self.df[self.df['lang'] == 'en']
 
         return self.df
-    
+
+    def reset_index(self) -> pd.DataFrame:
+        """
+        reset the index after preprocessing
+        """
+        self.df.reset_index(drop=True, inplace=True)
+
+        return self.df
+
     def run_pipeline(self):
         self.drop_unwanted_column()
         self.remove_non_english_tweets()
         self.drop_duplicate()
         self.convert_to_datetime()
         self.convert_to_numbers()
+        self.drop_nan()
+        self.reset_index()
 
         return self.df

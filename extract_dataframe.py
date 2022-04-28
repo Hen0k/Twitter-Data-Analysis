@@ -66,8 +66,9 @@ class TweetDfExtractor:
         return created_at
 
     def find_source(self) -> list:
-        source = [entry['source'].split('>')[1].split(
-            '</')[0] for entry in self.tweets_list]
+        # source = [entry['source'].split('>')[1].split(
+        #     '</')[0] for entry in self.tweets_list]
+        source = [entry['source'] for entry in self.tweets_list]
 
         return source
 

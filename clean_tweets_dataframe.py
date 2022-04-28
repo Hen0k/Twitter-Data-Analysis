@@ -47,12 +47,13 @@ class Clean_Tweets:
 
         return self.df
 
-    def convert_to_numbers(self) -> pd.DataFrame:
+    def convert_to_numbers(self, column_names=None) -> pd.DataFrame:
         """
         convert columns like polarity, subjectivity, retweet_count
         favorite_count etc to numbers
         """
-        column_names = ['polarity', 'subjectivity',
+        if not column_names:
+            column_names = ['polarity', 'subjectivity',
                         'retweet_count', 'favorite_count',
                         'followers_count', 'friends_count']
         for column in column_names:

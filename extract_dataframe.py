@@ -66,6 +66,8 @@ class TweetDfExtractor:
         return created_at
 
     def find_source(self) -> list:
+        # source = [entry['source'].split('>')[1].split(
+        #     '</')[0] for entry in self.tweets_list]
         source = [entry['source'] for entry in self.tweets_list]
 
         return source
@@ -110,14 +112,16 @@ class TweetDfExtractor:
         hashtags = [entry['entities']['hashtags']
                     for entry in self.tweets_list]
 
-        hashtags = [[ht.get('text') for ht in x] if len(x) else [] for x in hashtags]
+        hashtags = [[ht.get('text') for ht in x] if len(x) else []
+                    for x in hashtags]
         return hashtags
 
     def find_mentions(self) -> list:
         mentions = [entry['entities']['user_mentions']
                     for entry in self.tweets_list]
 
-        mentions = [[mention.get('screen_name') for mention in x] if len(x) else [] for x in mentions]
+        mentions = [[mention.get('screen_name') for mention in x] if len(
+            x) else [] for x in mentions]
 
         return mentions
 

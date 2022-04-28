@@ -6,65 +6,83 @@ class CleanTweets:
     The PEP8 Standard AMAZING!!!
     """
 
-    def __init__(self, df: pd.DataFrame):
-        self.df = df
+    def __init__(self):
         print('Automation in Action...!!!')
 
-    def drop_unwanted_column(self) -> pd.DataFrame:
+    def drop_unwanted_column(self, df: pd.DataFrame) -> pd.DataFrame:
         """
         remove rows that has column names. This error originated from
         the data collection stage.  
         """
-        unwanted_rows = self.df[self.df['retweet_count']
+        unwanted_rows = df[df['retweet_count']
                                 == 'retweet_count'].index
-        self.df.drop(unwanted_rows, inplace=True)
-        self.df = self.df[self.df['polarity'] != 'polarity']
+        df.drop(unwanted_rows, inplace=True)
+        df = df[df['polarity'] != 'polarity']
 
-        return self.df
+        return df
 
-    def drop_duplicate(self) -> pd.DataFrame:
+    def drop_duplicate(self, df: pd.DataFrame) -> pd.DataFrame:
         """
         drop duplicate rows
         """
-        self.df.drop_duplicates(inplace=True)
+        df.drop_duplicates(inplace=True)
 
-        return self.df
+        return df
 
-    def convert_to_datetime(self) -> pd.DataFrame:
+    def drop_nan(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        drop rows with nan entries
+        """
+        df.dropna(inplace=True)
+
+        return df
+
+    def convert_to_datetime(self, df: pd.DataFrame) -> pd.DataFrame:
         """
         convert column to datetime
         """
-        self.df['created_at'] = pd.to_datetime(self.df['created_at'])
-        self.df = self.df[self.df['created_at'] >= '2020-12-31']
+        df['created_at'] = pd.to_datetime(df['created_at'])
+        df = df[df['created_at'] >= '2020-12-31']
 
-        return self.df
+        return df
 
-    def convert_to_numbers(self) -> pd.DataFrame:
+    def convert_to_numbers(self, df: pd.DataFrame, column_names=None) -> pd.DataFrame:
         """
         convert columns like polarity, subjectivity, retweet_count
         favorite_count etc to numbers
         """
-        column_names = ['polarity', 'subjectivity',
+        if not column_names:
+            column_names = ['polarity', 'subjectivity',
                         'retweet_count', 'favorite_count',
                         'followers_count', 'friends_count']
         for column in column_names:
-            self.df[column] = pd.to_numeric(self.df[column])
+            df[column] = pd.to_numeric(df[column])
 
-        return self.df
+        return df
 
-    def remove_non_english_tweets(self) -> pd.DataFrame:
+    def remove_non_english_tweets(self, df: pd.DataFrame) -> pd.DataFrame:
         """
         remove non english tweets from lang
         """
-        self.df = self.df[self.df['lang'] == 'en']
+        df = df[df['lang'] == 'en']
 
-        return self.df
+        return df
 
-    def run_pipeline(self):
-        self.drop_unwanted_column()
-        self.remove_non_english_tweets()
-        self.drop_duplicate()
-        self.convert_to_datetime()
-        self.convert_to_numbers()
+    def reset_index(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        reset the index after preprocessing
+        """
+        df.reset_index(drop=True, inplace=True)
 
-        return self.df
+        return df
+
+    def run_pipeline(self, df: pd.DataFrame):
+        df = self.drop_unwanted_column(df)
+        df = self.remove_non_english_tweets(df)
+        df = self.drop_duplicate(df)
+        df = self.convert_to_datetime(df)
+        df = self.convert_to_numbers(df)
+        df = self.drop_nan(df)
+        df = self.reset_index(df)
+
+        return df

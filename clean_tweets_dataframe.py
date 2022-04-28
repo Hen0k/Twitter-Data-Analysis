@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-class Clean_Tweets:
+class CleanTweets:
     """
     The PEP8 Standard AMAZING!!!
     """
@@ -15,7 +15,8 @@ class Clean_Tweets:
         remove rows that has column names. This error originated from
         the data collection stage.  
         """
-        unwanted_rows = self.df[self.df['retweet_count'] == 'retweet_count'].index
+        unwanted_rows = self.df[self.df['retweet_count']
+                                == 'retweet_count'].index
         self.df.drop(unwanted_rows, inplace=True)
         self.df = self.df[self.df['polarity'] != 'polarity']
 
@@ -44,7 +45,7 @@ class Clean_Tweets:
         favorite_count etc to numbers
         """
         column_names = ['polarity', 'subjectivity',
-                        'retweet_count', 'favorite_count', 
+                        'retweet_count', 'favorite_count',
                         'followers_count', 'friends_count']
         for column in column_names:
             self.df[column] = pd.to_numeric(self.df[column])
@@ -58,7 +59,7 @@ class Clean_Tweets:
         self.df = self.df[self.df['lang'] == 'en']
 
         return self.df
-    
+
     def run_pipeline(self):
         self.drop_unwanted_column()
         self.remove_non_english_tweets()

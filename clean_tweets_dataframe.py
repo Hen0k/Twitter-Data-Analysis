@@ -15,7 +15,7 @@ class CleanTweets:
         the data collection stage.  
         """
         unwanted_rows = df[df['retweet_count']
-                                == 'retweet_count'].index
+                           == 'retweet_count'].index
         df.drop(unwanted_rows, inplace=True)
         df = df[df['polarity'] != 'polarity']
 
@@ -53,8 +53,8 @@ class CleanTweets:
         """
         if not column_names:
             column_names = ['polarity', 'subjectivity',
-                        'retweet_count', 'favorite_count',
-                        'followers_count', 'friends_count']
+                            'retweet_count', 'favorite_count',
+                            'followers_count', 'friends_count']
         for column in column_names:
             df[column] = pd.to_numeric(df[column])
 

@@ -20,6 +20,22 @@ class CleanTweets:
         df = df[df['polarity'] != 'polarity']
 
         return df
+    
+    def remove_links(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Remove links in tweets
+        """
+        df['original_text'] = df['original_text'].replace(r'http\S+', '', regex=True).replace(r'www\S+', '', regex=True)
+        
+        return df
+
+    def remove_special_characters(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Remove any especial charaters like @ for retweets
+        """
+        df['original_text'] = df['original_text'].str.replace("[^a-zA-Z#]", " ")
+        
+        return df
 
     def drop_duplicate(self, df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -75,6 +91,15 @@ class CleanTweets:
         df.reset_index(drop=True, inplace=True)
 
         return df
+    
+    def to_lower(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        convert tweet and hashtags to lower case
+        """
+        df["original_text"] = df["original_text"].str.lower()
+        df["hashtags"] = df["hashtags"].str.lower()
+
+        return df
 
     def run_pipeline(self, df: pd.DataFrame):
         df = self.drop_unwanted_column(df)
@@ -83,6 +108,9 @@ class CleanTweets:
         df = self.convert_to_datetime(df)
         df = self.convert_to_numbers(df)
         df = self.drop_nan(df)
+        df = self.remove_links(df)
+        df = self.remove_special_characters(df)
         df = self.reset_index(df)
+        df = self.to_lower(df)
 
         return df

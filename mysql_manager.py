@@ -78,15 +78,22 @@ def get_table_names():
         return names
 
 
-def get_labled_texts():
+def get_labled_tweets():
+    with engine.connect() as conn:
+        labled_df = pd.read_sql_table('tweets_information', con=conn)
 
-    top_ten = engine.execute(
-        "SELECT `original_text`, `score` from tweets_information LIMIT 10;").fetchall()
-    pprint(top_ten)
+        return labled_df
+
+
+def get_cleaned_tweets():
+    with engine.connect() as conn:
+        cleand_df = pd.read_sql_table('cleaned_tweets_information', con=conn)
+
+        return cleand_df
 
 
 if __name__ == "__main__":
     create_tables()
     cleand_df, labled_df = get_data()
     insert_data(labled_df, "tweets_information")
-    get_labled_texts()
+    insert_data(cleand_df, "cleaned_tweets_information")

@@ -56,7 +56,7 @@ if st.checkbox('Show Cleaned Data'):
     st.dataframe(cleaned_df)
 
 # plot sentiment
-st.subheader('Tweet Sentiments posetive VS negative')
+st.subheader('Tweet Sentiments positive VS negative')
 sentiment_ratio = labled_df['score'].value_counts()
 
 

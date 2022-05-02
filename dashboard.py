@@ -5,8 +5,16 @@ import plotly.graph_objects as go
 
 from mysql_manager import get_labled_tweets
 from mysql_manager import get_cleaned_tweets
-from utils import get_common_hashtags, get_tweet_words
-from wordcloud import WordCloud
+from utils import get_common_hashtags, get_tweet_words, retweets_polarity
+from wordcloud import STOPWORDS, WordCloud
+from nltk.corpus import stopwords
+
+
+
+
+STOP_WORDS = list(set(stopwords.words('english')).union(['t', 'rt', 'ti', 'vk', 'to', 'co',
+                    'dqlw', 'z', 'nd', 'm', 's', 'kur', 'u', 'o', 'd']).union(STOPWORDS))
+
 st.title('Twitter Data Analysis')
 
 # Create a text element and let the reader know the data is loading.
@@ -26,7 +34,7 @@ def get_pie_plot(labels, values):
 
 
 def get_wordcloud(words):
-    wordcloud = WordCloud(width=800, height=400).generate(words)
+    wordcloud = WordCloud(stopwords=STOP_WORDS, width=800, height=400).generate(words)
     wordcloud = wordcloud.to_image()
 
     return wordcloud
@@ -85,3 +93,14 @@ tweets_wordcloud = get_wordcloud(tweet_words)
 print(type(tweets_wordcloud))
 st.subheader('Tweet wordcloud')
 st.image(tweets_wordcloud)
+
+st.subheader('Retwetted vs non-Retweeted tweets polarity')
+# retweeted, non_retweeted = st.columns(2)
+rt_count, non_rt_count = retweets_polarity(labled_df)
+rt_fig = get_pie_plot(rt_count.keys(), rt_count)
+non_rt_fig = get_pie_plot(non_rt_count.keys(), non_rt_count)
+# with retweeted:
+st.plotly_chart(rt_fig, width=50)
+
+# with non_retweeted:
+st.plotly_chart(non_rt_fig, width=50)

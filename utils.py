@@ -83,12 +83,12 @@ def get_common_hashtags(cleaned_df, top):
 
 
 def get_tweet_words(df):
-    custom_stopwords = ['t', 'rt', 'ti', 'vk', 'to', 'co',
-                    'dqlw', 'z', 'nd', 'm', 's', 'kur', 'u', 'o', 'd']#,
-                    # "will", "new", "amp"]
-    STOP_WORDS = STOPWORDS.union(custom_stopwords)
+    # custom_stopwords = ['t', 'rt', 'ti', 'vk', 'to', 'co',
+    #                 'dqlw', 'z', 'nd', 'm', 's', 'kur', 'u', 'o', 'd']#,
+    #                 # "will", "new", "amp"]
+    # STOP_WORDS = STOPWORDS.union(custom_stopwords)
     df['clean_text'] = df['original_text'].apply(
-        lambda x: [item for item in x.split() if item not in STOP_WORDS])
+        lambda x: [item for item in x.split()])
     sentence_list = df['clean_text'].to_list()
     words = []
     for ele in sentence_list:
@@ -101,3 +101,9 @@ def get_tweet_words(df):
     # print(word_list[:5])
     # texts = df['original_text'].values
     # print(texts)
+
+
+def retweets_polarity(df:pd.DataFrame)->pd.DataFrame:
+    rt_count = df[df['retweet_count']>0]['score'].value_counts()
+    non_rt_count = df[df['retweet_count']==0]['score'].value_counts()
+    return rt_count, non_rt_count

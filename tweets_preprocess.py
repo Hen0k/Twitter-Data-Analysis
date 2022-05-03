@@ -19,7 +19,7 @@ class SADataPreparation:
         else:
             return 'neutral'
 
-    def preprocess_data(self, df, drop_neutral=True):
+    def preprocess_data(self, df, drop_neutral=False):
         polarity = df['polarity']
         score = polarity.apply(
             lambda x: self.text_label(x))
@@ -34,7 +34,7 @@ class SADataPreparation:
 
     def prepare_features(self, df):
         df = self.preprocess_data(df)
-        score_series = df['score'].map({'positive': 1, 'negative': 0})
+        score_series = df['score'].map({'positive': 1, 'negative': -1, "neutral":0})
         text_series = df['clean_text']
         X = text_series.tolist()
         y = score_series.tolist()
@@ -46,7 +46,7 @@ class SADataPreparation:
 
     def vectorize_features(self, df):
         X_train, X_test, y_train, y_test = self.prepare_features(df)
-        trigram_vect = CountVectorizer(ngram_range=(3, 3))
+        trigram_vect = CountVectorizer(ngram_range=(1, 2))
         trigram_vect.fit(X_train)
         X_train_trigram = trigram_vect.transform(X_train)
         X_test_trigram = trigram_vect.transform(X_test)

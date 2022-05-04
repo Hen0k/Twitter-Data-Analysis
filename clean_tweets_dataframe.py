@@ -162,7 +162,7 @@ class CleanTweets:
         df = df.rename(columns={"original_text": "clean_text"})
         return df
 
-    def run_pipeline(self, df: pd.DataFrame):
+    def run_pipeline(self, df: pd.DataFrame, save_csv: bool=False):
         df = self.drop_unwanted_rows(df)
         df = self.remove_non_english_tweets(df)
         df = self.drop_duplicate(df)
@@ -170,13 +170,15 @@ class CleanTweets:
         df = self.convert_to_numbers(df)
         df = self.fill_nan(df)
         df = self.drop_nan(df)
-        df = self.remove_mentions_and_hashtag(df)
+        # df = self.remove_mentions_and_hashtag(df)
         df = self.remove_links(df)
-        df = self.expand_contractions(df)
+        # df = self.expand_contractions(df)
         df = self.remove_special_characters(df)
         df = self.reset_index(df)
         df = self.to_lower(df)
-        df = self.remove_stopwords(df)
+        # df = self.remove_stopwords(df)
         df = self.rename_column(df)
+        if save_csv:
+            df.to_csv("cleaned_data.csv")
 
         return df

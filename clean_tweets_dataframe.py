@@ -2,6 +2,7 @@ import pandas as pd
 import string
 import re
 from nltk.corpus import stopwords
+from sqlalchemy import column
 from wordcloud import STOPWORDS
 import contractions
 
@@ -128,7 +129,7 @@ class CleanTweets:
         my_stopwords = set(stopwords.words('english'))
         my_stopwords = STOPWORDS.union(my_stopwords)
         custom_stopwords = set(['t', 'rt', 'ti', 'vk', 'to', 'co',
-                    'dqlw', 'z', 'nd', 'm', 's', 'kur', 'u', 'o', 'd'])
+                                'dqlw', 'z', 'nd', 'm', 's', 'kur', 'u', 'o', 'd'])
         my_stopwords = my_stopwords.union(custom_stopwords)
         df["original_text"] = df["original_text"].apply(
             lambda doc: " ".join([word for word in doc.split()
@@ -145,20 +146,23 @@ class CleanTweets:
         # access row index within the apply function
         df['original_text'] = df['original_text'].apply(
             lambda doc: " ".join(
-                [word for word in doc.split() \
+                [word for word in doc.split()
                     if not word.startswith(("#", "@"))])
         )
 
         return df
-    
 
     def expand_contractions(self, df: pd.DataFrame) -> pd.DataFrame:
         df['original_text'] = df['original_text'].apply(
             lambda doc: " ".join([contractions.fix(word) for word in doc.split()]))
 
         return df
+    
+    def rename_column(self, df: pd.DataFrame) -> pd.DataFrame:
+        df = df.rename(columns={"original_text": "clean_text"})
+        return df
 
-    def run_pipeline(self, df: pd.DataFrame):
+    def run_pipeline(self, df: pd.DataFrame, save_csv: bool=False):
         df = self.drop_unwanted_rows(df)
         df = self.remove_non_english_tweets(df)
         df = self.drop_duplicate(df)
@@ -173,5 +177,8 @@ class CleanTweets:
         df = self.reset_index(df)
         df = self.to_lower(df)
         df = self.remove_stopwords(df)
+        df = self.rename_column(df)
+        if save_csv:
+            df.to_csv("cleaned_data.csv")
 
         return df

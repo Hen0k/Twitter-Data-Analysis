@@ -32,8 +32,8 @@ class SADataPreparation:
 
         return labled_df
 
-    def prepare_features(self, df):
-        df = self.preprocess_data(df)
+    def prepare_features(self, df, drop_neutral=False):
+        df = self.preprocess_data(df, drop_neutral)
         score_series = df['score'].map({'positive': 1, 'negative': -1, "neutral":0})
         text_series = df['clean_text']
         X = text_series.tolist()
@@ -46,9 +46,9 @@ class SADataPreparation:
 
     def vectorize_features(self, df):
         X_train, X_test, y_train, y_test = self.prepare_features(df)
-        trigram_vect = CountVectorizer(ngram_range=(1, 2))
-        trigram_vect.fit(X_train)
-        X_train_trigram = trigram_vect.transform(X_train)
-        X_test_trigram = trigram_vect.transform(X_test)
+        count_vect = CountVectorizer(ngram_range=(1, 1))
+        count_vect.fit(X_train)
+        X_train_count = count_vect.transform(X_train)
+        X_test_count = count_vect.transform(X_test)
 
-        return X_train_trigram, X_test_trigram, y_train, y_test, trigram_vect
+        return X_train_count, X_test_count, y_train, y_test, count_vect

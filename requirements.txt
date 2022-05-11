@@ -109,7 +109,7 @@ sniffio==1.2.0
 soupsieve==2.3.2.post1
 SQLAlchemy==1.4.36
 stack-data==0.2.0
-streamlit==1.8.1
+streamlit==1.9.0
 tenacity==8.0.1
 terminado==0.13.3
 textblob==0.17.1
